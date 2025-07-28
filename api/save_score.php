@@ -3,7 +3,6 @@ header('Content-Type: application/json');
 
 $filePath = __DIR__ . '/../data/scores.json';
 
-// Récupérer les données POST
 $data = json_decode(file_get_contents('php://input'), true);
 $pseudo = $data['pseudo'] ?? 'Anonyme';
 $score = intval($data['score'] ?? 0);
@@ -18,13 +17,11 @@ if ($score < 0 || $maxScore < 1 || $score > $maxScore) {
     exit;
 }
 
-// Lire les scores existants
 $scores = [];
 if (file_exists($filePath)) {
     $scores = json_decode(file_get_contents($filePath), true) ?: [];
 }
 
-// Ajouter le nouveau score
 $newScore = [
     'pseudo' => substr(trim($pseudo), 0, 20),
     'score' => $score,
@@ -36,7 +33,6 @@ $newScore = [
 
 array_push($scores, $newScore);
 
-// Sauvegarder
 if (file_put_contents($filePath, json_encode($scores, JSON_PRETTY_PRINT))) {
     echo json_encode(['success' => true, 'position' => count($scores)]);
 } else {
