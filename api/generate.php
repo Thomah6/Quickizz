@@ -22,7 +22,6 @@ $level = $_GET['level'] ?? 'débutant';
 $count = isset($_GET['count']) ? intval($_GET['count']) : 5;
 $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
 
-// Prompt optimisé pour Groq
 $prompt = <<<PROMPT
 Tu es un expert en développement logiciel et en création de quiz techniques.
 Génère un quiz de {$count} questions sur le thème "$topic" de niveau "$level".
