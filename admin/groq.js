@@ -1,7 +1,7 @@
-const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+import { CONFIG } from './config.js';
 
-// Clé API Groq
-const GROQ_API_KEY =process.env.MA_CLE_API_GROQ;
+const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_API_KEY = CONFIG.GROQ_API_KEY;
 
 /**
  * Generates a quiz using the Groq API.
@@ -98,3 +98,5 @@ export const generateQuizWithGroq = async (techName, moduleName) => {
         throw new Error(`Échec de la génération du quiz: ${error.message}`);
     }
 };
+
+// test push
