@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin - Quickizz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#f6f8fa] font-[Poppins] text-[#24292f] min-h-screen">
+  <div class="container mx-auto p-4 md:p-8">
+    <!-- En-tête avec bouton de déconnexion -->
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-2xl md:text-3xl font-bold">Admin Quickizz</h1>
+      <button id="logout-btn" class="hidden bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-md text-sm md:text-base">
+        Déconnexion
+      </button>
+    </header>
+
+    <!-- Vue Connexion -->
+    <div id="login-view" class="bg-white border border-[#d0d7de] rounded-md shadow-sm p-6 max-w-md mx-auto">
+      <h2 class="text-2xl font-bold mb-6 text-center">Connexion Admin</h2>
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="login-email" class="block mb-1 font-medium text-[#57606a]">Email</label>
+          <input type="email" id="login-email" required 
+                 class="w-full rounded-md border border-[#d0d7de] px-3 py-2 text-[#24292f] focus:outline-none focus:ring-2 focus:ring-[#2da44e] focus:border-transparent">
+        </div>
+        <div>
+          <label for="login-password" class="block mb-1 font-medium text-[#57606a]">Mot de passe</label>
+          <input type="password" id="login-password" required
+                 class="w-full rounded-md border border-[#d0d7de] px-3 py-2 text-[#24292f] focus:outline-none focus:ring-2 focus:ring-[#2da44e] focus:border-transparent">
+        </div>
+        <button type="submit" class="w-full bg-[#2da44e] hover:bg-[#2c974b] text-white font-semibold py-2 px-4 rounded-md transition-colors">
+          Se connecter
+        </button>
+        <p class="text-center text-sm text-[#57606a]">
+          Pas encore de compte ? 
+          <button type="button" id="show-signup" class="text-[#2da44e] hover:underline">S'inscrire</button>
+        </p>
+      </form>
+    </div>
+
+    <div id="signup-view" class="hidden bg-white border border-[#d0d7de] rounded-md shadow-sm p-6 max-w-md mx-auto">
+      <h2 class="text-2xl font-bold mb-6 text-center">Inscription Admin</h2>
+      <form id="signup-form" class="space-y-4">
+        <div>
+          <label for="signup-username" class="block mb-1 font-medium text-[#57606a]">Nom d'utilisateur</label>
+          <input type="text" id="signup-username" required
+                 class="w-full rounded-md border border-[#d0d7de] px-3 py-2 text-[#24292f] focus:outline-none focus:ring-2 focus:ring-[#2da44e] focus:border-transparent">
+        </div>
+        <div>
+          <label for="signup-email" class="block mb-1 font-medium text-[#57606a]">Email</label>
+          <input type="email" id="signup-email" required
+                 class="w-full rounded-md border border-[#d0d7de] px-3 py-2 text-[#24292f] focus:outline-none focus:ring-2 focus:ring-[#2da44e] focus:border-transparent">
+        </div>
+        <div>
+          <label for="signup-password" class="block mb-1 font-medium text-[#57606a]">Mot de passe</label>
+          <input type="password" id="signup-password" required minlength="6"
+                 class="w-full rounded-md border border-[#d0d7de] px-3 py-2 text-[#24292f] focus:outline-none focus:ring-2 focus:ring-[#2da44e] focus:border-transparent">
+        </div>
+        <div>
+          <label for="confirm-password" class="block mb-1 font-medium text-[#57606a]">Confirmer le mot de passe</label>
+          <input type="password" id="confirm-password" required
+                 class="w-full rounded-md border border-[#d0d7de] px-3 py-2 text-[#24292f] focus:outline-none focus:ring-2 focus:ring-[#2da44e] focus:border-transparent">
+        </div>
+        <button type="submit" class="w-full bg-[#2da44e] hover:bg-[#2c974b] text-white font-semibold py-2 px-4 rounded-md transition-colors">
+          S'inscrire
+        </button>
+        <p class="text-center text-sm text-[#57606a]">
+          Déjà inscrit ? 
+          <button type="button" id="show-login" class="text-[#2da44e] hover:underline">Se connecter</button>
+        </p>
+      </form>
+    </div>
+
+    <div id="dashboard-view" class="hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Tableau de bord Admin</h2>
+        <button id="show-generator" class="bg-[#2da44e] hover:bg-[#2c974b] text-white font-semibold py-2 px-4 rounded-md transition-colors">
+          Nouveau Quiz
+        </button>
+      </div>
+      
+      <!-- Onglets de navigation et boutons d'action -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div class="tabs">
+          <button class="tab active" data-tab="technologies">Technologies</button>
+          <button class="tab" data-tab="users">Utilisateurs</button>
+        </div>
+      
+      </div>
+
+      <!-- Section Technologies et Quiz -->
+      <div id="technologies-tab" class="tab-content active">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold">Mes Technologies</h3>
+        </div>
+        <div id="tech-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <!-- Les technologies seront ajoutées ici dynamiquement -->
+        </div>
+        
+        <div id="quizzes-container" class="hidden">
+          <h4 class="text-lg font-medium mb-3">Quiz disponibles</h4>
+          <div id="quizzes-list" class="space-y-4">
+            <!-- Les quiz seront ajoutés ici dynamiquement -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Section Utilisateurs -->
+      <div id="users-tab" class="tab-content hidden">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold">Utilisateurs</h3>
+          <button id="refresh-users" class="btn btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Actualiser
+          </button>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h4 class="font-semibold">Liste des utilisateurs</h4>
+          </div>
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Email</th>
+                  <th>Inscrit le</th>
+                  <th>Dernière connexion</th>
+                  <th>Score total</th>
+                </tr>
+              </thead>
+              <tbody id="users-list">
+                <tr>
+                  <td colspan="5" class="text-center py-8 text-gray-500">
+                    <div class="flex justify-center">
+                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                    </div>
+                    <p class="mt-2">Chargement des utilisateurs...</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer flex justify-between items-center p-4 border-t border-gray-200">
+            <div class="text-sm text-gray-500">
+              <span id="users-count">0</span> utilisateur(s) trouvé(s)
+            </div>
+            <div class="flex gap-2">
+              <button id="prev-page" class="btn btn-outline btn-sm" disabled>Précédent</button>
+              <button id="next-page" class="btn btn-outline btn-sm" disabled>Suivant</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Section Générateur de Quiz (cachée par défaut) -->
+      <div id="quiz-generator" class="hidden">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-semibold">Générateur de Quiz</h3>
+          <button id="hide-generator" class="text-[#57606a] hover:text-[#24292f]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="bg-white border border-[#d0d7de] rounded-md shadow-sm p-6 max-w-2xl mx-auto">
+          <form id="quiz-generator-form" class="space-y-6">
+          <div>
+            <label for="tech-select" class="block mb-2 font-semibold text-[#57606a]">Technologie</label>
+            <select
+              id="tech-select"
+              name="tech-select"
+              required
+              class="w-full rounded-md border border-[#d0d7de] px-4 py-2 text-[#24292f] focus:outline-none focus:ring-2 focus:ring-[#2da44e] focus:border-transparent transition bg-white"
+            >
+              <option value="" disabled selected>Sélectionnez une technologie</option>
+              <!-- Les options seront ajoutées dynamiquement par JavaScript -->
+            </select>
+          </div>
+          
+          <input type="hidden" id="tech-name" name="tech-name">
+          
+          <div id="tech-icon-preview" class="flex items-center justify-center p-4 bg-gray-50 rounded-lg hidden">
+            <p class="text-sm text-gray-500">Aperçu de l'icône :</p>
+            <i id="tech-icon" class="ml-2 text-3xl"></i>
+          </div>
+
+          <div>
+            <label for="module-name" class="block mb-2 font-semibold text-[#57606a]">Nom du Module</label>
+            <input
+              type="text"
+              id="module-name"
+              name="module-name"
+              placeholder="Ex: Les Promesses"
+              required
+              class="w-full rounded-md border border-[#d0d7de] px-4 py-2 text-[#24292f] placeholder-[#909dab] focus:outline-none focus:ring-2 focus:ring-[#2da44e] focus:border-transparent transition"
+            />
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              id="generate-btn"
+              class="bg-[#2da44e] hover:bg-[#2c974b] text-white font-semibold px-6 py-2 rounded-md shadow-sm transition-colors"
+            >
+              Générer le Quiz
+            </button>
+          </div>
+        </form>
+        <div id="status-message" class="mt-6 text-center text-[#57606a]"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./admin.js"></script>
+  <style>
+    .tech-card {
+      transition: all 0.2s ease-in-out;
+    }
+    .tech-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .quiz-item {
+      transition: background-color 0.2s ease-in-out;
+    }
+    .quiz-item:hover {
+      background-color: #f8fafc;
+    }
+    
+    /* Styles pour les onglets */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 1.5rem;
+    }
+    
+    .tab {
+      padding: 0.75rem 1.25rem;
+      font-weight: 500;
+      color: #6b7280;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .tab:hover {
+      color: #374151;
+    }
+    
+    .tab.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Styles pour les cartes */
+    .card {
+      background: white;
+      border-radius: 0.375rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .card-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    /* Styles pour les tableaux */
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .table th,
+    .table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .table th {
+      background-color: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</body>
+</html>
