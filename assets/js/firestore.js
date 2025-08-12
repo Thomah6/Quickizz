@@ -37,13 +37,27 @@ export const getTechnologyDetails = async (techId) => {
  * @returns {Promise<Array>} A promise that resolves to an array of module objects.
  */
 export const getModulesForTechnology = async (techId) => {
-    const modulesColRef = collection(db, `technologies/${techId}/modules`);
-    const querySnapshot = await getDocs(modulesColRef);
-    const modules = [];
-    querySnapshot.forEach((doc) => {
-        modules.push({ id: doc.id, ...doc.data() });
-    });
-    return modules;
+    try {
+        const modulesColRef = collection(db, `technologies/${techId}/modules`);
+        const querySnapshot = await getDocs(modulesColRef);
+        const modules = [];
+        
+        querySnapshot.forEach((doc) => {
+            modules.push({ 
+                id: doc.id, 
+                createdAt: doc.data().createdAt?.toDate?.() || new Date(0), // Utilise la date de création ou une date très ancienne si non définie
+                ...doc.data() 
+            });
+        });
+
+        // Trier les modules par date de création (du plus ancien au plus récent)
+        modules.sort((a, b) => a.createdAt - b.createdAt);
+        
+        return modules;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des modules:", error);
+        return [];
+    }
 };
 
 /**
@@ -60,9 +74,9 @@ export const getQuizzesForModule = async (techId, moduleId) => {
         quizzes.push({ id: doc.id, ...doc.data() });
     });
 
-    // Shuffle the array and pick 10 questions
+    // Mélanger le tableau et sélectionner 20 questions
     quizzes.sort(() => Math.random() - 0.5);
-    return quizzes.slice(0, 10);
+    return quizzes.slice(0, 20);
 };
 
 /**

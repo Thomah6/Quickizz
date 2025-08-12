@@ -26,6 +26,76 @@ const launchConfetti = () => {
     setTimeout(() => container.remove(), 1600);
 };
 
+// Variables pour le minuteur
+let timeLeft = 10 * 60; // 10 minutes en secondes
+let timerInterval = null;
+
+// Fonction pour formater le temps en minutes:secondes
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Fonction pour démarrer le minuteur
+function startTimer() {
+    const timerElement = document.getElementById('timer');
+    
+    // Mettre à jour immédiatement
+    timerElement.textContent = formatTime(timeLeft);
+    
+    // Démarrer le compte à rebours
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        
+        // Mettre à jour l'affichage
+        timerElement.textContent = formatTime(timeLeft);
+        
+        // Changer la couleur en orange quand il reste 2 minutes
+        if (timeLeft <= 120) {
+            timerElement.classList.add('text-orange-500');
+            timerElement.classList.remove('text-red-500');
+        }
+        
+        // Changer la couleur en rouge quand il reste 30 secondes
+        if (timeLeft <= 30) {
+            timerElement.classList.remove('text-orange-500');
+            timerElement.classList.add('text-red-500');
+            
+            // Faire clignoter les 10 dernières secondes
+            if (timeLeft <= 10) {
+                timerElement.classList.toggle('opacity-70');
+            }
+        }
+        
+        // Temps écoulé
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timeUp();
+        }
+    }, 1000);
+}
+
+// Fonction appelée quand le temps est écoulé
+function timeUp() {
+    // Désactiver tous les boutons de réponse
+    const buttons = document.querySelectorAll('#options-container button');
+    buttons.forEach(button => {
+        button.disabled = true;
+    });
+    
+    // Afficher un message
+    const resultContainer = document.getElementById('result-container');
+    resultContainer.innerHTML = '<span class="flex items-center"><span class="material-icons text-red-600 mr-2">timer_off</span>Temps écoulé !</span>';
+    resultContainer.className = 'text-lg font-semibold text-red-600 mb-2';
+    
+    // Afficher le bouton pour voir les résultats
+    nextBtn.classList.remove('hidden');
+    
+    // Afficher les résultats finaux
+    showFinalResults();
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     // --- Breadcrumb ---
     const breadcrumbContainer = document.getElementById('breadcrumb');
@@ -86,7 +156,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const startQuiz = () => {
         currentQuestionIndex = 0;
         score = 0;
+        timeLeft = 10 * 60; // Réinitialiser le minuteur à 10 minutes
+        if (timerInterval) clearInterval(timerInterval);
+        startTimer();
         showQuestion();
+    };
+
+    // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+    const shuffleArray = (array) => {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
     };
 
     const showQuestion = () => {
@@ -104,7 +187,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         progressText.textContent = `Question ${currentQuestionIndex + 1}/${quizzes.length}`;
         progressBar.style.width = `${progress}%`;
 
-        question.options.forEach(option => {
+        // Mélanger les options de réponse
+        const shuffledOptions = shuffleArray(question.options);
+        
+        // Afficher les boutons dans un ordre aléatoire
+        shuffledOptions.forEach(option => {
             const button = document.createElement('button');
             button.textContent = option;
             button.className = 'w-full text-left p-4 bg-gray-100 rounded-lg border-2 border-transparent hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2da44e]';
@@ -146,6 +233,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const showFinalResults = async () => {
+        // Arrêter le minuteur
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        
         quizArea.classList.add('hidden');
         resultArea.classList.remove('hidden');
         // Affichage du score ?/total

@@ -14,7 +14,30 @@ export const generateQuizWithGroq = async (techName, moduleName) => {
         throw new Error('Missing required parameters');
     }
 
-    const prompt = `En tant qu'expert en création de quiz, générez 50 questions de quiz originales en français sur la technologie "${techName}", avec un focus sur le niveau "${moduleName}". Répondez uniquement avec un objet JSON valide. L'objet doit contenir une seule clé "quizzes" qui est un tableau d'objets. Chaque objet dans le tableau doit représenter une question et contenir les clés suivantes: "question" (la question du quiz), "options" (un tableau de 4 chaînes de caractères pour les réponses), "answer" (la bonne réponse), "appreciation" (une brève explication de la bonne réponse), et "level" (le niveau du quiz, qui est "${moduleName}"). Assurez-vous que l'ensemble de la réponse est un JSON valide et bien formaté. Les valeurs des chaînes de caractères ne doivent contenir aucun caractère de saut de ligne, de tabulation ou de retour à la ligne non échappé.`;
+    const prompt = `En tant qu'expert en création de quiz, générez 50 (minimum) questions de quiz originales en français sur la technologie "${techName}", avec un focus strict et exclusif sur le module "${moduleName}".
+
+INSTRUCTIONS IMPORTANTES :
+1. Chaque question doit être EXCLUSIVEMENT liée au module "${moduleName}" de la technologie "${techName}".
+2. NE PAS inclure de questions sur d'autres modules ou aspects de la technologie qui ne sont pas directement liés à "${moduleName}".
+3. Pour chaque question, la réponse correcte DOIT être l'une des options proposées (vérifiez bien cela).
+4. Les questions doivent couvrir différents aspects du module de manière équilibrée.
+5. Évitez les questions trop générales qui pourraient s'appliquer à plusieurs modules.
+
+FORMAT DE RÉPONSE :
+Répondez UNIQUEMENT avec un objet JSON valide contenant une seule clé "quizzes" qui est un tableau d'objets. Chaque objet doit avoir la structure suivante :
+{
+  "question": "[La question claire et précise]",
+  "options": ["[Option 1]", "[Option 2]", "[Option 3]", "[Option 4]"],
+  "answer": "[L'une des options ci-dessus, exactement comme écrite]",
+  "appreciation": "[Explication claire et concise de la réponse, 1-2 phrases maximum]",
+  "level": "${moduleName}"
+}
+
+EXIGENCES TECHNIQUES :
+- Tous les textes doivent être en français.
+- Les chaînes de caractères NE DOIVENT PAS contenir de sauts de ligne (\n), de tabulations (\t) ou de retours à la ligne non échappés.
+- Les guillemets dans les textes doivent être échappés avec un antislash (\").
+- La réponse DOIT être un JSON valide et bien formaté.`;
 
     try {
         const response = await fetch(API_URL, {
@@ -75,19 +98,60 @@ export const generateQuizWithGroq = async (techName, moduleName) => {
                 throw new Error('Format de quiz invalide. Assurez-vous que la réponse contient un tableau \'quizzes\'.');
             }
             
-            // Nettoyer les chaînes de caractères
-            result.quizzes = result.quizzes.map(quiz => ({
-                ...quiz,
-                question: quiz.question?.replace(/\n/g, ' ').trim(),
-                answer: quiz.answer?.replace(/\n/g, ' ').trim(),
-                appreciation: quiz.appreciation?.replace(/\n/g, ' ').trim(),
-                level: quiz.level || moduleName,
-                options: Array.isArray(quiz.options) 
-                    ? quiz.options.map(opt => typeof opt === 'string' ? opt.replace(/\n/g, ' ').trim() : String(opt))
-                    : []
-            }));
+            // Nettoyer et valider chaque quiz
+            const validatedQuizzes = [];
             
-            return result;
+            for (const quiz of result.quizzes) {
+                try {
+                    // Vérifier que tous les champs requis existent
+                    if (!quiz.question || !quiz.options || !quiz.answer || !quiz.appreciation) {
+                        console.warn('Quiz invalide - champs manquants:', quiz);
+                        continue;
+                    }
+                    
+                    // Nettoyer les chaînes de caractères
+                    const cleanedQuiz = {
+                        question: String(quiz.question || '').replace(/\n/g, ' ').trim(),
+                        answer: String(quiz.answer || '').replace(/\n/g, ' ').trim(),
+                        appreciation: String(quiz.appreciation || '').replace(/\n/g, ' ').trim(),
+                        level: String(quiz.level || moduleName),
+                        options: Array.isArray(quiz.options) 
+                            ? quiz.options
+                                .map(opt => String(opt || '').replace(/\n/g, ' ').trim())
+                                .filter(opt => opt.length > 0) // Supprimer les options vides
+                            : []
+                    };
+                    
+                    // Vérifier que la réponse est bien dans les options
+                    if (!cleanedQuiz.options.includes(cleanedQuiz.answer)) {
+                        console.warn('La réponse n\'est pas dans les options, ajout automatique:', {
+                            question: cleanedQuiz.question,
+                            answer: cleanedQuiz.answer,
+                            options: cleanedQuiz.options
+                        });
+                        cleanedQuiz.options.push(cleanedQuiz.answer);
+                    }
+                    
+                    // Vérifier qu'il y a au moins 2 options
+                    if (cleanedQuiz.options.length < 2) {
+                        console.warn('Pas assez d\'options pour la question:', cleanedQuiz.question);
+                        continue;
+                    }
+                    
+                    // Vérifier que les champs requis ne sont pas vides
+                    if (cleanedQuiz.question && cleanedQuiz.answer && cleanedQuiz.appreciation) {
+                        validatedQuizzes.push(cleanedQuiz);
+                    }
+                } catch (error) {
+                    console.error('Erreur lors du nettoyage du quiz:', error, quiz);
+                }
+            }
+            
+            if (validatedQuizzes.length === 0) {
+                throw new Error('Aucun quiz valide après validation. Vérifiez les logs pour plus de détails.');
+            }
+            
+            return { quizzes: validatedQuizzes };
         } catch (parseError) {
             console.error('Erreur lors du parsing de la réponse:', parseError);
             throw new Error(`Erreur de format de la réponse: ${parseError.message}`);

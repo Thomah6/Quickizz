@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 return `
-                <a href="/game.html?techId=${techId}&moduleId=${module.id}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 flex flex-col justify-between">
+                <a href="/game.html?techId=${techId}&moduleId=${module.id}" class="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-xl transition-shadow duration-200 flex flex-col justify-between">
                     <div>
                         <h3 class="font-bold text-xl mb-2 text-gray-800">${module.name}</h3>
                         <p class="text-gray-600">${module.description || ''}</p>
