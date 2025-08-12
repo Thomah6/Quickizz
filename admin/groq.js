@@ -1,7 +1,7 @@
 const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 // Clé API Groq
-const GROQ_API_KEY = MA_CLE_API_GROQ;
+const GROQ_API_KEY =process.env.MA_CLE_API_GROQ;
 
 /**
  * Generates a quiz using the Groq API.
