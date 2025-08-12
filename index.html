@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quickizz - Testez vos connaissances</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-[#f6f8fa] font-[Poppins] text-[#24292f]">
+
+  <header class="bg-white border-b border-[#d0d7de] sticky top-0 z-50">
+    <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold text-[#24292f] hover:text-[#2da44e] transition-colors">Quickizz</a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="/leaderboard.html" class="text-lg font-medium text-[#57606a] hover:text-[#2da44e] transition-colors">
+          Leaderboard
+        </a>
+        <div id="auth-container-desktop"></div>
+      </div>
+
+      <div class="md:hidden">
+        <button id="mobile-menu-button" class="text-[#24292f]">
+          <span class="material-icons text-3xl">menu</span>
+        </button>
+      </div>
+    </nav>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-[#d0d7de]">
+      <a href="/leaderboard.html" class="block py-3 px-6 text-lg font-medium text-[#57606a] hover:bg-[#f6f8fa]">Leaderboard</a>
+      <div id="auth-container-mobile" class="p-4"></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="bg-white border-b border-[#d0d7de]">
+      <div class="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center gap-12">
+        <div class="md:w-1/2 space-y-6 text-center md:text-left">
+          <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+            Testez vos <span class="text-[#2da44e]">connaissances</span>,<br> devenez un expert.
+          </h1>
+          <p class="text-lg text-[#57606a]">
+            Des quiz interactifs pour maîtriser les <span class="font-semibold text-[#24292f]">technologies de demain</span>.
+          </p>
+          <a href="#tech-section" class="inline-block bg-[#2da44e] text-white font-semibold py-3 px-8 rounded-md hover:bg-[#2c974b] shadow-sm transition-colors">
+            Commencer un Quiz
+          </a>
+        </div>
+
+        <div class="md:w-1/2 flex justify-center">
+          <img src="assets/img/undraw_quiz.svg" alt="Illustration d'un quiz" class="w-80 md:w-[270px]">
+        </div>
+      </div>
+    </section>
+
+    <section id="tech-section" class="py-20">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center mb-14">Choisissez une technologie</h2>
+        <div id="tech-choice" class="flex flex-wrap justify-center gap-6">
+            <!-- Exemple de card dynamique -->
+            
+          </div>
+          
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script type="module" src="assets/js/firebase-config.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
+  <script src="assets/js/header.js"></script>
+</body>
+</html>
