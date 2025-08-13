@@ -1,6 +1,6 @@
 import { authStateObserver, signInWithGoogle, signOutUser } from './auth.js';
 import { db } from './firebase-config.js';
-import { collection, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
+import { collection, query, orderBy, limit, getDocs, where } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
