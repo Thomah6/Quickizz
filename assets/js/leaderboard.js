@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null;
 
     const getLeaderboard = async () => {
-        const usersRef = collection(db, 'users');
+        const usersRef = collection(db, 'userProfiles');
         const q = query(usersRef, orderBy('totalScore', 'desc'), limit(20));
 
         try {
