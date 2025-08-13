@@ -14,14 +14,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const modulesContainer = document.getElementById('modules-container');
     const breadcrumbContainer = document.getElementById('breadcrumb');
     let currentUser = null;
+ function getDeviconName(techName) {
+  const iconMappings = {
+    // Mappings explicites pour les cas spéciaux
+    'javascript': 'javascript',
+    'vue.js': 'vuejs',
+    'vuejs': 'vuejs',
+    'c#': 'csharp',
+    'csharp': 'csharp',
+    'typescript': 'typescript',
+    'html5': 'html5',
+    'css3': 'css3',
+    'node.js': 'nodejs',
+    'nodejs': 'nodejs',
+    'react': 'react',
+    'angular': 'angularjs',
+    'python': 'python',
+    'java': 'java',
+    'php': 'php',
+    'swift': 'swift',
+    'kotlin': 'kotlin',
+    'go': 'go',
+    'rust': 'rust',
+    
+    // Règle générique par défaut
+    '*': techName.toLowerCase().replace(/[.#]/g, '').replace(/\s+/g, '-')
+  };
 
+  // Nettoyer l'input
+  const cleanName = techName.toLowerCase().trim();
+  
+  // Retourner le mapping explicite si existant, sinon appliquer la règle générique
+  return iconMappings[cleanName] || iconMappings['*'];
+}
     const loadModules = async () => {
         const userScores = currentUser ? await getUserScores(currentUser.uid) : {};
         try {
             const techDetails = await getTechnologyDetails(techId);
             if (techDetails) {
                 // Ajout de l'icône Devicon avant le titre
-                const iconName = techDetails.name ? techDetails.name.toLowerCase() : '';
+                const iconName = getDeviconName(techDetails.name.toLowerCase());
                 techTitle.innerHTML = `<i class="devicon-${iconName}-plain text-3xl align-middle mr-2"></i>Modules de ${techDetails.name}`;
                 breadcrumbContainer.innerHTML = `<a href="/" class="hover:underline">Accueil</a> > <span class="font-semibold">${techDetails.name}</span>`;
             }

@@ -45,7 +45,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const techChoiceContainer = document.getElementById('tech-choice');
+ function getDeviconName(techName) {
+  const iconMappings = {
+    // Mappings explicites pour les cas spéciaux
+    'javascript': 'javascript',
+    'vue.js': 'vuejs',
+    'vuejs': 'vuejs',
+    'c#': 'csharp',
+    'csharp': 'csharp',
+    'typescript': 'typescript',
+    'html5': 'html5',
+    'css3': 'css3',
+    'node.js': 'nodejs',
+    'nodejs': 'nodejs',
+    'react': 'react',
+    'angular': 'angularjs',
+    'python': 'python',
+    'java': 'java',
+    'php': 'php',
+    'swift': 'swift',
+    'kotlin': 'kotlin',
+    'go': 'go',
+    'rust': 'rust',
+    
+    // Règle générique par défaut
+    '*': techName.toLowerCase().replace(/[.#]/g, '').replace(/\s+/g, '-')
+  };
 
+  // Nettoyer l'input
+  const cleanName = techName.toLowerCase().trim();
+  
+  // Retourner le mapping explicite si existant, sinon appliquer la règle générique
+  return iconMappings[cleanName] || iconMappings['*'];
+}
     const displayTechnologies = async () => {
         try {
             const technologies = await getTechnologies();
@@ -55,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             technologies.forEach(tech => {
                 // Map technology ID to Devicon icon name if they differ
-                const iconName = tech.name.toLowerCase();
+                const iconName = getDeviconName(tech.name.toLowerCase());
 
                 const techCard = `
                    <a href="/quiz.html?tech=${tech.id}" 
