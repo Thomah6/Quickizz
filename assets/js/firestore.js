@@ -31,6 +31,26 @@ export const getTechnologyDetails = async (techId) => {
     }
 };
 
+
+/**
+ * Fetches a user's profile from the 'userProfiles' collection
+ * @param {string} userId The user's ID
+ * @returns {Promise<Object|null>} The user profile data or null if not found
+ */
+export const getUserProfile = async (userId) => {
+    try {
+        const userRef = doc(db, 'userProfiles', userId);
+        const docSnap = await getDoc(userRef);
+        
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() };
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting user profile:", error);
+        return null;
+    }
+};
 /**
  * Fetches all modules for a given technology.
  * @param {string} techId The ID of the technology.
