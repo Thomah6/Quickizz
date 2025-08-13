@@ -9,8 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getLeaderboard = async () => {
         const usersRef = collection(db, 'userProfiles');
-        const q = query(usersRef, orderBy('totalScore', 'desc'), limit(20));
-
+const q = query(
+        usersRef, 
+        where('totalScore', '>=', 1),  // Nouvelle condition
+        orderBy('totalScore', 'desc'), 
+        limit(20)
+    );
         try {
             const querySnapshot = await getDocs(q);
             leaderboardList.innerHTML = ''; // Clear previous list
@@ -38,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img src="${user.photoURL}" alt="${user.displayName}" class="w-10 h-10 rounded-full mr-4">
                         <span class="font-medium">${user.displayName}</span>
                     </td>
-                    <td class="p-4 text-xl font-bold text-[#2da44e] text-center">${user.totalScore || 0}</td>
+                    <td class="p-4 text-xl font-bold text-[#2da44e] text-center">${Math.max(user.totalScore || 0, 1)}</td>
                 </tr>
             `});
             leaderboardList.innerHTML = rows.join('');
